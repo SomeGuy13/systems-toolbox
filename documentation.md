@@ -69,26 +69,48 @@ func _on_item_collected(item: Item):
 Organized alphabetically with a short description of what each signal
 is for.
 
-##### `input_action_pressed("action")`
+##### `game_state_changed(new_state: GameManager.GameState)`
+Emits when the game state changes with the `new_state`.
+
+##### `input_action_pressed(action: String)`
 Emits when an action is pressed within the InputSystem. The parameter is
 the action that was pressed.
 
-##### `input_action_released("action")`
+##### `input_action_released(action: String)`
 Emits when an action is released within the InputSystem. The parameter
 is the action that was released.
 
-##### `setting_changed(key, value)`
+##### `setting_changed(key: String, value)`
 Emits when a setting is changed with the key and value of that setting.
+
+### GameManager v1.0.0
+Dependencies: SignalBus, InputSystem
+Tracks the state of the game and freezes physics and input accordingly.
+
+GameState enum: MENU, LOADING, PLAYING, PAUSED, GAME_OVER, CUTSCENE
+
+#### Public Methods
+
+##### `get_current_game_state()`
+Returns the current state of the game.
+
+##### `set_game_state(new_state: GameState)`
+Sets the game state to a new state defined in the GameState enum.
+Some states will disable or enable physics and input.
+
+**GameState.CUTSCENE**: Disables input, but not physics
+**GameState.PAUSED**: Disables input and physics
+**GameState.PLAYING**: Enables input and physics
 
 ### AudioSystem v1.0.0
 Dependencies: EventBus (SettingsSystem when added)
 
 #### Public Methods
 
-##### get_music_volume()
+##### `get_music_volume()`
 Returns the current decible volume the music is set at.
 
-##### get_sfx_volume()
+##### `get_sfx_volume()`
 Returns the current decible volume the sfx are set at.
 
 ##### `play_sound(sound_key: String, volume_db: float = _sfx_volume_db)`
@@ -114,7 +136,7 @@ AudioSystem.play_sound("sfx_belly_brumble") # Does not exist
 # Pushes error
 ```
 
-##### play_music(music_key: String, fade_in: float, fade_out: float = 0.0)
+##### `play_music(music_key: String, fade_in: float, fade_out: float = 0.0)`
 Plays music loaded from the path at 
 `"res://assets/sounds/" + sound_key + ".wav"` and if the file does not
 exist, an error is pushed and the music is not played. When music starts
@@ -131,10 +153,10 @@ AudioSystem.play_music("sound_track_01", 3.0)
 AudioSystem.play_music("sound_track_02", 3.0, 1.0)
 ```
 
-##### set_music_volume(volume_db: float)
+##### `set_music_volume(volume_db: float)`
 Sets the music volume to `volume_db`.
 
-##### set_sfx_volume(volume_db: float)
+##### `set_sfx_volume(volume_db: float)`
 Sets the default sfx volume to `volume_db`.
 
 #### Private Methods

@@ -4,6 +4,9 @@
 
 extends Node
 
+# GameManager Signals
+signal game_state_changed(new_state: GameManager.GameState)
+
 # InputSystem Signals
 signal input_action_pressed(action: String)
 signal input_action_released(action: String)
