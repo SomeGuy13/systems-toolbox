@@ -47,7 +47,7 @@ EventBus.{signal}.emit({Data: data})
 
 Example:
 ```
-EventBus.player_took_damage(amount: 34)
+EventBus.player_took_damage.emit(amount: 34)
 EventBus.player_died.emit()
 ```
 
@@ -77,6 +77,9 @@ the action that was pressed.
 Emits when an action is released within the InputSystem. The parameter
 is the action that was released.
 
+##### `setting_changed(key, value)`
+Emits when a setting is changed with the key and value of that setting.
+
 ### AudioSystem v1.0.0
 Dependencies: EventBus (SettingsSystem when added)
 
@@ -92,7 +95,8 @@ Returns the current decible volume the sfx are set at.
 Plays a sound specified by the `sound_key` in the file path at 
 `"res://assets/sounds/" + sound_key + ".wav"` at the specified volume,
 otherwise it defaults to the internal _sfx_volume_db which can be
-changed through SettingsSystem (when implemented).
+changed through SettingsSystem (when implemented). Alos updates audio
+settings automatically when the setting is changed in the SettingsSystem.
 
 Example:
 ```
@@ -187,3 +191,26 @@ set_enabled_state(false) # Input is now disabled
 
 ##### `_input(event: InputEvent)`
 Emits signals in the EventBus when the InputSystem is enabled.
+
+### SettingsSystem v1.0.0
+
+#### Public Methods
+
+##### `get_setting(key: String, default = null)`
+Returns the value of the setting found by the key, if there is no
+key found than the default setting is used. If the default setting
+cannot be found than the default is used.
+
+##### `load_settings_from_file(path: String)`
+Loads the settings from the file specified at `path` into the internal
+`_settings` which can be accessed by `get_setting(key: String, default)`.
+Rreturns true if successful, otherwise returns false.
+
+##### `save_settings_to_file(path: String)`
+Saves settings to file specified at `path` from internal `_settings`
+which can be changed through `set_setting(key: String, value)`. Returns
+true if successful, otherwise returns false,
+
+##### `set_setting(key: String, value)`
+Sets a setting within the internal `_settings`. If setting does not
+exist, it will create a new setting within the dictionary.

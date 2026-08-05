@@ -1,6 +1,6 @@
 extends Node
 
-var dependencies = ["EventBus"] # "SettingsSystem"
+var dependencies = ["EventBus", "SettingsSystem"]
 const SOUND_PATH = "res://assets/sounds/"
 
 var _sfx_player_pool: Array[AudioStreamPlayer]
@@ -19,6 +19,8 @@ func _ready() -> void:
 	_populate_sfx_pool(8)
 	
 	_music_player = AudioStreamPlayer.new()
+	
+	EventBus.setting_changed.connect(_handle_audio_settings_changed)
 
 func _populate_sfx_pool(players: int) -> void:
 	for i in range(players):
@@ -31,6 +33,15 @@ func _get_available_sfx_player() -> AudioStreamPlayer:
 		if not player.is_playing():
 			return player
 	return _sfx_player_pool[0]
+
+func _handle_audio_settings_changed(key, value):
+	match key:
+		"audio/sfx_volume":
+			set_sfx_volume(value)
+		"audio/music_volume":
+			set_music_volume(value)
+		_:
+			pass
 
 func play_sound(sound_key: String, volume_db: float = _sfx_volume_db) -> void:
 	var player := _get_available_sfx_player()

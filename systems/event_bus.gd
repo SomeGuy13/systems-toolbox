@@ -8,4 +8,5 @@ extends Node
 signal input_action_pressed(action: String)
 signal input_action_released(action: String)
 
-# AudioSystem Signals
+# SettingsSystem Signals
+signal setting_changed(key: String, value)

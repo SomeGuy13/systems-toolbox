@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 EventBus="*uid://cv3bnjnvc67in"
 InputSystem="*uid://dhsaimdmgphk5"
 AudioSystem="*uid://tb22d25fsfy8"
+SettingsSystem="*uid://qtxqfv8tgogp"
 
 [display]
 
