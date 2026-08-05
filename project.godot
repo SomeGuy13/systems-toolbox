@@ -21,6 +21,7 @@ InputSystem="*uid://dhsaimdmgphk5"
 AudioSystem="*uid://tb22d25fsfy8"
 SettingsSystem="*uid://qtxqfv8tgogp"
 GameManager="*uid://cyusttlalqk"
+SceneManager="*uid://c4moet0ix8qil"
 
 [display]
 

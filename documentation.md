@@ -32,6 +32,73 @@ Each system is listed in alphabetical order, with the current version of
 that system. The Systems Toolbox version is incremented per revision or
 addition to the systems. Each system also tracks its own versions.
 
+### AudioSystem v1.0.0
+Dependencies: EventBus (SettingsSystem when added)
+
+#### Public Methods
+
+##### `get_music_volume()`
+Returns the current decible volume the music is set at.
+
+##### `get_sfx_volume()`
+Returns the current decible volume the sfx are set at.
+
+##### `play_sound(sound_key: String, volume_db: float = _sfx_volume_db)`
+Plays a sound specified by the `sound_key` in the file path at 
+`"res://assets/sounds/" + sound_key + ".wav"` at the specified volume,
+otherwise it defaults to the internal _sfx_volume_db which can be
+changed through SettingsSystem (when implemented). Alos updates audio
+settings automatically when the setting is changed in the SettingsSystem.
+
+Example:
+```
+AudioSystem.play_sound("sfx_hit_1") # Plays at default volume
+
+AudioSystem.play_sound("sfx_hit_2", -7.0) # Plays at -7.0db
+```
+
+If the sound file cannot be found, an error is thrown and the sound 
+is not played.
+
+Example:
+```
+AudioSystem.play_sound("sfx_belly_brumble") # Does not exist
+# Pushes error
+```
+
+##### `play_music(music_key: String, fade_in: float, fade_out: float = 0.0)`
+Plays music loaded from the path at 
+`"res://assets/sounds/" + sound_key + ".wav"` and if the file does not
+exist, an error is pushed and the music is not played. When music starts
+to play, it is faded in over the seconds specified by `fade_in`. When
+new music is played over old music, it is faded out over `fade_out` and
+then faded in through `fade_in` again.
+
+Example:
+```
+AudioSystem.play_music("sound_track_01", 3.0)
+
+# Later on mid track
+
+AudioSystem.play_music("sound_track_02", 3.0, 1.0)
+```
+
+##### `set_music_volume(volume_db: float)`
+Sets the music volume to `volume_db`.
+
+##### `set_sfx_volume(volume_db: float)`
+Sets the default sfx volume to `volume_db`.
+
+#### Private Methods
+
+##### `_get_available_sfx_player()`
+Returns an available sfx player that can be used. Returns the first player
+if all players in the pool are used.
+
+##### `_populate_sfx_pool(players: int)`
+Populates the internal `_sfx_pool` with a specified amount of
+AudioStreamPlayers that the AudioSystem can use.
+
 ### EventBus v1.0.0
 Dependencies: None
 
@@ -102,73 +169,6 @@ Some states will disable or enable physics and input.
 **GameState.PAUSED**: Disables input and physics
 **GameState.PLAYING**: Enables input and physics
 
-### AudioSystem v1.0.0
-Dependencies: EventBus (SettingsSystem when added)
-
-#### Public Methods
-
-##### `get_music_volume()`
-Returns the current decible volume the music is set at.
-
-##### `get_sfx_volume()`
-Returns the current decible volume the sfx are set at.
-
-##### `play_sound(sound_key: String, volume_db: float = _sfx_volume_db)`
-Plays a sound specified by the `sound_key` in the file path at 
-`"res://assets/sounds/" + sound_key + ".wav"` at the specified volume,
-otherwise it defaults to the internal _sfx_volume_db which can be
-changed through SettingsSystem (when implemented). Alos updates audio
-settings automatically when the setting is changed in the SettingsSystem.
-
-Example:
-```
-AudioSystem.play_sound("sfx_hit_1") # Plays at default volume
-
-AudioSystem.play_sound("sfx_hit_2", -7.0) # Plays at -7.0db
-```
-
-If the sound file cannot be found, an error is thrown and the sound 
-is not played.
-
-Example:
-```
-AudioSystem.play_sound("sfx_belly_brumble") # Does not exist
-# Pushes error
-```
-
-##### `play_music(music_key: String, fade_in: float, fade_out: float = 0.0)`
-Plays music loaded from the path at 
-`"res://assets/sounds/" + sound_key + ".wav"` and if the file does not
-exist, an error is pushed and the music is not played. When music starts
-to play, it is faded in over the seconds specified by `fade_in`. When
-new music is played over old music, it is faded out over `fade_out` and
-then faded in through `fade_in` again.
-
-Example:
-```
-AudioSystem.play_music("sound_track_01", 3.0)
-
-# Later on mid track
-
-AudioSystem.play_music("sound_track_02", 3.0, 1.0)
-```
-
-##### `set_music_volume(volume_db: float)`
-Sets the music volume to `volume_db`.
-
-##### `set_sfx_volume(volume_db: float)`
-Sets the default sfx volume to `volume_db`.
-
-#### Private Methods
-
-##### `_get_available_sfx_player()`
-Returns an available sfx player that can be used. Returns the first player
-if all players in the pool are used.
-
-##### `_populate_sfx_pool(players: int)`
-Populates the internal `_sfx_pool` with a specified amount of
-AudioStreamPlayers that the AudioSystem can use.
-
 ### InputSystem v1.0.0
 Dependencies: EventBus
 The InputSystem serves as a wraper around Godot's InputMap to allow for
@@ -214,6 +214,36 @@ set_enabled_state(false) # Input is now disabled
 ##### `_input(event: InputEvent)`
 Emits signals in the EventBus when the InputSystem is enabled.
 
+### SceneManager v1.0.0
+Dependencies: EventBus, GameManager
+Loads scenes with fade transitions between them.
+
+#### Public Methods
+
+##### `load_scene(scene_path: String, fade_duration: float = 0.5)`
+Loads the scene at the specified path, and fades the scene out as specified
+by the `fade_duration`. When the scene is finished loading it will fade back
+in by the `fade_duration`.
+
+Example:
+```
+load_scene("res://scenes/dungeon_1") # Loads scenes with fade transitions of 0.5s
+load_scene("res://scenes/dungeon_2", 1.0) # Same thing but for one second
+```
+
+##### `reload_current_scene(fade_duration: float = 0.5)`
+Reloads the current scene with fade durations used in `load_scene()`.
+
+#### Private Methods
+
+##### `_fade_in(duration: float)`
+Fades out the opacity of a black rect that fills the whole screen used for
+scene transitions.
+
+##### `_fade_out(duration: float)`
+Fades in the opacity of a black rect that fills the whole screen used for
+scene transitions
+
 ### SettingsSystem v1.0.0
 
 #### Public Methods
@@ -222,6 +252,11 @@ Emits signals in the EventBus when the InputSystem is enabled.
 Returns the value of the setting found by the key, if there is no
 key found than the default setting is used. If the default setting
 cannot be found than the default is used.
+
+Example:
+```
+get_setting("audio/sfx_voume") # Returns the volume for the sfx
+```
 
 ##### `load_settings_from_file(path: String)`
 Loads the settings from the file specified at `path` into the internal
