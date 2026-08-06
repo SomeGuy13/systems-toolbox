@@ -11,6 +11,11 @@ signal game_state_changed(new_state: GameManager.GameState)
 signal input_action_pressed(action: String)
 signal input_action_released(action: String)
 
+# SaveSystem Signals
+
+signal game_save_complete
+signal game_load_complete
+
 # SceneManager Signals
 signal scene_load_started(scene_name: String)
 signal scene_load_finished(scene_name: String)

@@ -136,6 +136,12 @@ func _on_item_collected(item: Item):
 Organized alphabetically with a short description of what each signal
 is for.
 
+##### `game_save_complete`
+Emits when all save data has been successfully stored.
+
+##### `game_load_complete`
+Emits when all save data has been successfully stored and loaded.
+
 ##### `game_state_changed(new_state: GameManager.GameState)`
 Emits when the game state changes with the `new_state`.
 
@@ -213,6 +219,66 @@ set_enabled_state(false) # Input is now disabled
 
 ##### `_input(event: InputEvent)`
 Emits signals in the EventBus when the InputSystem is enabled.
+
+### SaveSystem v1.0.0
+Dependencies: EventBus
+Saves data to a JSON file, with the ability to handle several save slots. Is
+also capable of loading data. To make a node savable, it must have a script
+that extends the `Saveable` class.
+
+From there, a unique `save_id` must be defined for storage purposes. After that
+two methods must be declared:
+
+`get_save_data()` which must return a Dictionary of the data that needs to be
+saved. 
+
+`load_save_data(data: Dictionary)` which receives the data from the SaveSystem
+and then applies it to the node.
+
+Example:
+```
+var hp := 35
+var gold := 100
+
+save_id = "player"
+
+get_save_data() -> Dictionary:
+	return {
+		"player_health": hp
+		"gold": gold,
+		"pos": {"x": global_position.x, "y": global_position.y}
+	}
+
+load_save_data(data: Dictionary) -> void:
+	hp = data.get("hp", hp)
+	gold = data.get("gold", gold)
+	
+	var p := data.get("pos", {})
+	global_position = Vector2(p.get("x"), global_position.x), p.get("y", global_position.y))
+```
+
+#### Public Methods
+
+##### `load_game()`
+Looks through the scene tree and finds all the nodes with the `load_save_data()`
+method, and also those that belong to the "Saveable" group. It then calls the
+`load_save_data()` method on each node while passing the data in to the method.
+Emits `EventBus.game_load_complete` when finished.
+
+##### `save_game()`
+Looks through the scene tree and finds all the nodes with the `get_save_data()`
+method, and also those that belong to the "Saveable" group. It then calls the
+method and stores the data returned in the save file. Emits
+`EventBus.game_save_complete` when finished
+
+#### Private Methods
+
+##### `_make_path()`
+Makes a pathway for the save data in the users file system.
+
+##### `_migrate(parsed: Dictionary)`
+If the save data structure changes as noted by the "version": 1 key in the data,
+logic can be written to change the old data structure to the new data structure.
 
 ### SceneManager v1.0.0
 Dependencies: EventBus, GameManager
