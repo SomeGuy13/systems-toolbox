@@ -23,6 +23,7 @@ SettingsSystem="*uid://qtxqfv8tgogp"
 GameManager="*uid://cyusttlalqk"
 SceneManager="*uid://c4moet0ix8qil"
 SaveSystem="*uid://bqffj2267ber"
+UiManager="*uid://dq1je0n0diyhi"
 
 [display]
 

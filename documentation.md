@@ -257,6 +257,9 @@ load_save_data(data: Dictionary) -> void:
 	global_position = Vector2(p.get("x"), global_position.x), p.get("y", global_position.y))
 ```
 
+**NOTE:** JSON does not store Godot types, they must be converted to a JSON
+friendly format.
+
 #### Public Methods
 
 ##### `load_game()`
@@ -337,3 +340,10 @@ true if successful, otherwise returns false,
 ##### `set_setting(key: String, value)`
 Sets a setting within the internal `_settings`. If setting does not
 exist, it will create a new setting within the dictionary.
+
+### UIManager v1.0.0
+Dependancies: EventBus
+This system is more game specific, and has some general functions that most
+games may use. However, it contains functions to manipulate the ui by listening
+to events from the EventBus. However, many more can be added, and events for
+button presses can be added to the EventBus for the UIManager to respond to.
